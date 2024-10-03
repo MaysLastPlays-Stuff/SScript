@@ -11,6 +11,7 @@ import hscriptBase.Expr;
 #if sys
 import sys.FileSystem;
 import sys.io.File;
+import openfl.utils.Assets;
 #end
 
 import tea.backend.*;
@@ -513,6 +514,7 @@ class SScript
 		#if sys
 		setClass(File);
 		setClass(FileSystem);
+		setClass(Assets);
 		setClass(Sys);
 		#end
 	}
@@ -547,10 +549,10 @@ class SScript
 		if (scriptPath != null && scriptPath.length > 0)
 		{
 			#if sys
-				if (FileSystem.exists(scriptPath))
+				if (Assets.exists(scriptPath))
 				{
 					scriptFile = scriptPath;
-					script = File.getContent(scriptPath);
+					script = Assets.getText(scriptPath);
 				}
 				else
 				{
@@ -584,11 +586,11 @@ class SScript
 		try 
 		{
 			#if sys
-			if (FileSystem.exists(string))
+			if (Assets.exists(string))
 			{
 				scriptFile = string;
 				origin = string;
-				string = File.getContent(string);
+				string = Assets.getText(string);
 			}
 			#end
 
@@ -669,9 +671,9 @@ class SScript
 
 		var list:Array<SScript> = [];
 		#if sys
-		if (FileSystem.exists(path) && FileSystem.isDirectory(path))
+		if (Assets.exists(path))
 		{
-			var files:Array<String> = FileSystem.readDirectory(path);
+			var files:Array<String> = Assets.list().filter(folder -> folder.contains(path));
 			for (i in files)
 			{
 				var hasExtension:Bool = false;
@@ -683,7 +685,7 @@ class SScript
 						break;
 					}
 				}
-				if (hasExtension && FileSystem.exists(path + i))
+				if (hasExtension && Assets.exists(path + i))
 					list.push(new SScript(path + i));
 			}
 		}
